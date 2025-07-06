@@ -1,0 +1,66 @@
+CREATE TABLE Customers (
+CustomerID INT PRIMARY KEY,
+CustomerName VARCHAR(255),
+City VARCHAR(255)
+);
+
+CREATE TABLE Orders (
+OrderID INT PRIMARY KEY,
+CustomerID INT,
+OrderDate DATE,
+Amount DECIMAL(10, 2),
+FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID)
+);
+
+  Sample Data (if needed again)
+INSERT INTO Customers (CustomerID, CustomerName, City) VALUES
+(1, 'Alice Smith', 'New York'),
+(2, 'Bob Johnson', 'Los Angeles'),
+(3, 'Charlie Brown', 'Chicago'),
+(4, 'David Lee', 'Houston');
+
+INSERT INTO Orders (OrderID, CustomerID, OrderDate, Amount) VALUES
+(101, 1, '2023-01-15', 150.00),
+(102, 2, '2023-01-20', 250.50),
+(103, 1, '2023-02-01', 75.20),
+(104, 3, '2023-02-10', 300.00),
+(105, 5, '2023-03-01', 120.00),   Order for a non-existent customer
+(106, 2, '2023-03-05', 90.00);
+
+CREATE VIEW CustomerOrderSummary AS
+SELECT
+C.CustomerID,
+C.CustomerName,
+COUNT(O.OrderID) AS NumberOfOrders,
+SUM(O.Amount) AS TotalAmountSpent
+FROM
+Customers C
+LEFT JOIN
+Orders O ON C.CustomerID = O.CustomerID
+GROUP BY
+C.CustomerID, C.CustomerName;
+
+CREATE VIEW NewYorkCustomers AS
+SELECT
+CustomerID,
+CustomerName,
+City
+FROM
+Customers
+WHERE
+City = 'New York';
+
+SELECT *
+FROM CustomerOrderDetails;
+
+SELECT CustomerName, TotalAmountSpent
+FROM CustomerOrderSummary
+WHERE NumberOfOrders > 0;
+
+SELECT CustomerName
+FROM NewYorkCustomers;
+
+DROP VIEW CustomerOrderDetails;
+DROP VIEW CustomerOrderSummary;
+DROP VIEW NewYorkCustomers;
+
